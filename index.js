@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // URI do Railway
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGO_PUBLIC_URL;
 const client = new MongoClient(uri);
 
 let db;
