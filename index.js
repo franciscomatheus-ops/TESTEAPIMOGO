@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // URI vem do Railway (Variables)
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGO_PUBLIC_URL;
 
 if (!uri) {
   console.error("❌ MONGODB_URI não definida");
@@ -35,3 +35,4 @@ app.get("/", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
+
