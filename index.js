@@ -4,35 +4,44 @@ const { MongoClient } = require("mongodb");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// URI vem do Railway (Variables)
-const uri = process.env.MONGO_PUBLIC_URL;
-
-if (!uri) {
-  console.error("❌ MONGODB_URI não definida");
-  process.exit(1);
-}
-
+// URI do Railway
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
-app.get("/", async (req, res) => {
+let db;
+
+// Conecta UMA VEZ quando a API sobe
+async function connectDB() {
   try {
-    // tenta conectar
     await client.connect();
-
-    // pega o banco (nome qualquer)
-    const db = client.db("teste_db");
-
-    // comando simples só pra validar
-    await db.command({ ping: 1 });
-
-    res.send("✅ API rodando e MongoDB conectado com sucesso!");
+    db = client.db("teste_db");
+    console.log("✅ Conectado ao MongoDB");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("❌ Erro ao conectar no MongoDB");
+    console.error("❌ Erro ao conectar no MongoDB", err);
   }
+}
+
+connectDB();
+
+// Rota para exibir os dados
+app.get("/nomes", async (req, res) => {
+  try {
+    const nomes = await db
+      .collection("nomes")
+      .find({})
+      .toArray();
+
+    res.json(nomes);
+  } catch (err) {
+    res.status(500).json({ erro: "Erro ao buscar nomes" });
+  }
+});
+
+// Rota teste
+app.get("/", (req, res) => {
+  res.send("🚀 API rodando com MongoDB");
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
-
